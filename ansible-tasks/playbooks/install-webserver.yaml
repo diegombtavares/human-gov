@@ -1,0 +1,16 @@
+- name: Install & Starting NGINX
+  hosts: all
+  become: true
+  tasks:
+    - name: Installing NGINX
+      ansible.builtin.yum:
+        name: nginx
+        state: latest
+
+    - name: Starting NGINX
+      ansible.builtin.shell: systemctl start nginx
+
+    - name: Enabling NGINX service during the boot process  
+      ansible.builtin.service:
+        name: nginx
+        enabled: true
