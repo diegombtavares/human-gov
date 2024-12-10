@@ -1,6 +1,6 @@
 resource "aws_security_group" "state_ec2_sg" {
   name        = "humangov-${var.state_name}-ec2-sg"
-  description = "Allow traffic on ports 22 and 80"
+  description = "Allow traffic on ports 22, 80, 5000"
 
   ingress {
     from_port   = 22
@@ -15,6 +15,20 @@ resource "aws_security_group" "state_ec2_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  
+  ingress {
+    from_port   = 5000
+    to_port     = 5000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   tags = {
     Name = "humangov-${var.state_name}"
@@ -26,6 +40,7 @@ resource "aws_instance" "state_ec2" {
   instance_type          = "t2.micro"
   key_name               = "humangov-ec2-key"
   vpc_security_group_ids = [aws_security_group.state_ec2_sg.id]
+  iam_instance_profile = aws_iam_instance_profile.s3_dynamodb_full_access_instance_profile.name
 
   tags = {
     Name = "humangov-${var.state_name}"
